@@ -2,7 +2,7 @@ from Configuration import Configuration
 from Rectangle import Rectangle as Rect
 from copy import deepcopy, copy
 import matplotlib.pyplot as plt 
-from Plot import initialize_plot, PLOT, update_plot, clear_plot
+from Plot import initialize_plot, update_temp_plot, clear_plot
 
 class Packer:
 
@@ -52,7 +52,7 @@ class Packer:
                 d = self.benefit_A1(ccoa, deepcopy(config))
                 if isinstance(d, Configuration):
                     print("fount one")
-                    return Configuration
+                    return d
                 else:
                     if max_benefit < d:
                         max_benefit = d
@@ -70,9 +70,9 @@ class Packer:
 
 def pack_rects(rects: list[tuple], con_size: tuple[float, float]) -> Configuration:
     config_rects = [Rect((0, 0), x[0], x[1], False) for x in rects]
-    C = Configuration(size=con_size, not_packed_rects=copy(config_rects), plot=False)
-    update_plot(C)
-    clear_plot()
+    C = Configuration(size=con_size, not_packed_rects=copy(config_rects), packed_rects=[], plot=False)
+    if Configuration.plotting:
+        update_temp_plot(C)
     packer = Packer(C)
     return packer.A1(C)
 
@@ -101,8 +101,8 @@ if __name__ == "__main__":
     rects = [Rect((0, 0), x[0], x[1], False) for x in cases]
     container_size = (20,20)
     C = Configuration(size=container_size, not_packed_rects=copy(rects), plot=False)
-    if PLOT:
+    if Configuration.plotting:
         initialize_plot(C, rects)
-    update_plot(C)
+        update_temp_plot(C)
     packer = Packer(C)
     C = packer.A1(C)

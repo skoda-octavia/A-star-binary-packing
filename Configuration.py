@@ -1,10 +1,11 @@
 from Rectangle import Rectangle as Rect
 from copy import deepcopy, copy
 from CornerType import CornerType
-from Plot import update_plot, PLOT, equals
+from Plot import update_temp_plot, equals
 
 
 class Configuration:
+    plotting = True
 
     def __init__(self, size: tuple[float], not_packed_rects: list[Rect] = [], packed_rects: list[Rect] = [], plot: bool=True) -> None:
         self.set_size(size)
@@ -12,7 +13,7 @@ class Configuration:
         self.packed_rects = packed_rects
         self.containing_distance = 0.2
         if plot:
-            update_plot(self)
+            update_temp_plot(self)
         self.generate_L()
         
 
@@ -117,7 +118,6 @@ class Configuration:
 
 
     def place_rect(self, rect: Rect) -> None:
-        #TODO removing from ccoas
         self.packed_rects.append(rect)
 
         for not_packed_rect in self.not_packed_rects:
@@ -127,8 +127,8 @@ class Configuration:
             elif equals(rect.width, not_packed_rect.height) and equals(rect.height, not_packed_rect.width):
                 self.not_packed_rects.remove(not_packed_rect)
                 break
-        if PLOT:
-            update_plot(self)
+        if Configuration.plotting:
+            update_temp_plot(self)
         self.generate_L()
         
 
