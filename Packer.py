@@ -1,7 +1,8 @@
 from Configuration import Configuration
 from Rectangle import Rectangle as Rect
 from copy import deepcopy, copy
-
+import matplotlib.pyplot as plt 
+from Plot import initialize_plot, PLOT, update_plot
 
 class Packer:
 
@@ -74,9 +75,22 @@ if __name__ == "__main__":
         (3,5),
         (5,5),
         (3,12),
+        (3,7),
+        (5,7),
+        (2,6),
+        (3,2),
+        (4,2),
+        (3,4),
+        (4,4),
+        (9,2),
+        (11,2)
     ]
+    
     rects = [Rect((0, 0), x[0], x[1], False) for x in cases]
     container_size = (20,20)
-    C = Configuration(size=container_size, not_packed_rects=copy(rects))
+    C = Configuration(size=container_size, not_packed_rects=copy(rects), plot=False)
+    if PLOT:
+        initialize_plot(C, rects)
+    update_plot(C)
     packer = Packer(C)
     C = packer.A1(C)

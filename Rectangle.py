@@ -1,6 +1,7 @@
 import math
 from CornerType import CornerType
 from copy import deepcopy
+from Plot import equals
 
 class Rectangle:
 
@@ -27,11 +28,6 @@ class Rectangle:
     def set_tops(self) -> None:
         self.top_x = self.placed_x + self.width
         self.top_y = self.placed_y + self.height
-
-    @staticmethod
-    def equals(a: float, b: float) -> bool:
-        tolerance = 1e-10
-        return math.isclose(a, b, abs_tol=tolerance)
 
 
     def set_placed(self, placed: tuple, rotated: bool, corner_type: CornerType) -> None:
@@ -78,15 +74,17 @@ class Rectangle:
             return 0
         
     def contains_point(self, point: tuple[float, float]) -> bool:
-        if point[0] > self.placed_x and point[0] < self.top_x:
-            return True
-        if point[1] > self.placed_y and point[1] < self.top_y:
+        if point[0] > self.placed_x and point[0] < self.top_x and point[1] > self.placed_y and point[1] < self.top_y:
             return True
         return False
     
     def overlaps(self, other):
-        if self.top_y < other.placed_y or self.placed_y > other.top_y:
+        if self.top_y < other.placed_y or equals(self.top_y, other.placed_y):
             return False
-        if self.top_x < other.placed_x or self.placed_x > other.top_x:
+        if self.placed_y > other.top_y or equals(self.placed_y, other.top_y):
+            return False
+        if self.top_x < other.placed_x or equals(self.top_x, other.placed_x):
+            return False
+        if self.top_x < other.placed_x or equals(self.placed_x, other.top_x):
             return False
         return True

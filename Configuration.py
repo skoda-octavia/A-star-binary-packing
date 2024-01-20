@@ -1,18 +1,21 @@
 from Rectangle import Rectangle as Rect
 from copy import deepcopy, copy
 from CornerType import CornerType
-from Plot import initialize_plot, plot_configuration
+from Plot import update_plot, PLOT, equals
 
 
 class Configuration:
 
-    def __init__(self, size: tuple[float], not_packed_rects: list[Rect] = [], packed_rects: list[Rect] = []) -> None:
+    def __init__(self, size: tuple[float], not_packed_rects: list[Rect] = [], packed_rects: list[Rect] = [], plot: bool=True) -> None:
         self.set_size(size)
         self.not_packed_rects = not_packed_rects
         self.packed_rects = packed_rects
         self.containing_distance = 0.2
+        if plot:
+            update_plot(self)
         self.generate_L()
-        initialize_plot(self)
+        
+
 
     def __copy__(self):
         cls = self.__class__
@@ -47,6 +50,8 @@ class Configuration:
                     ccoa = Rect(corner, width, height, rotated, corner_type)
                     if self.rect_fits(ccoa, corner_type):
                         ccoas.append(ccoa)
+                    else:
+                        continue
         self.L = ccoas
     
 
@@ -75,9 +80,9 @@ class Configuration:
 
     def get_corner_type(self, corner: tuple[float, float]) -> CornerType:
         north_east = corner[0] + self.containing_distance, corner[1] + self.containing_distance
-        south_east = corner[0] - self.containing_distance, corner[1] + self.containing_distance
+        south_east = corner[0] + self.containing_distance, corner[1] - self.containing_distance
         south_west = corner[0] - self.containing_distance, corner[1] - self.containing_distance
-        north_west = corner[0] + self.containing_distance, corner[1] - self.containing_distance
+        north_west = corner[0] - self.containing_distance, corner[1] + self.containing_distance
         taken_list = []
         taken_list.append(self.point_taken(north_east))
         taken_list.append(self.point_taken(south_east))
@@ -116,21 +121,22 @@ class Configuration:
         self.packed_rects.append(rect)
 
         for not_packed_rect in self.not_packed_rects:
-            if Rect.equals(rect.width, not_packed_rect.width) and Rect.equals(rect.height, not_packed_rect.height):
+            if equals(rect.width, not_packed_rect.width) and equals(rect.height, not_packed_rect.height):
                 self.not_packed_rects.remove(not_packed_rect)
                 break
-            elif Rect.equals(rect.width, not_packed_rect.height) and Rect.equals(rect.height, not_packed_rect.width):
+            elif equals(rect.width, not_packed_rect.height) and equals(rect.height, not_packed_rect.width):
                 self.not_packed_rects.remove(not_packed_rect)
                 break
+        if PLOT:
+            update_plot(self)
         self.generate_L()
-
-        plot_configuration(self, self.successful())
+        
 
 
     def density(self) -> float:
         container_area = self.height * self.width
         occupied_areas = [rect.height * rect.width for rect in self.packed_rects]
-        return container_area/sum(occupied_areas)
+        return sum(occupied_areas)/container_area
     
     def successful(self) -> bool:
         return len(self.not_packed_rects) == 0
