@@ -17,6 +17,14 @@ max_width = 0
 def argmax(lst):
     return lst.index(max(lst))
 
+
+def clear_plot():
+    global all_rects
+    global max_width
+    all_rects = []
+    max_width = 0
+    plt.clf()
+
 def initialize_plot(C, rects, plot_size = (12,6)):
     global max_width
     global all_rects
@@ -65,7 +73,7 @@ def update_plot(C):
 
     draw_rects_overview(axs[1], all_rects, C.not_packed_rects)
     plt.draw()
-    plt.pause(0.005)
+    plt.pause(0.01)
 
 
 

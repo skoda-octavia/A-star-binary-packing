@@ -2,7 +2,7 @@ from Configuration import Configuration
 from Rectangle import Rectangle as Rect
 from copy import deepcopy, copy
 import matplotlib.pyplot as plt 
-from Plot import initialize_plot, PLOT, update_plot
+from Plot import initialize_plot, PLOT, update_plot, clear_plot
 
 class Packer:
 
@@ -62,9 +62,21 @@ class Packer:
 
         if config.successful():
             print("Found successful configuration")
+            return config
         else:
             print("Stopped with failure")
-        return config
+            return None
+
+
+def pack_rects(rects: list[tuple], con_size: tuple[float, float]) -> Configuration:
+    config_rects = [Rect((0, 0), x[0], x[1], False) for x in rects]
+    C = Configuration(size=con_size, not_packed_rects=copy(config_rects), plot=False)
+    update_plot(C)
+    clear_plot()
+    packer = Packer(C)
+    return packer.A1(C)
+
+
 
 if __name__ == "__main__":
     cases = [

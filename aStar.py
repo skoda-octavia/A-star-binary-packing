@@ -1,4 +1,8 @@
 import queue
+from Packer import pack_rects
+from Plot import initialize_plot, PLOT
+
+MAX_INT = 2**31 - 1
 
 cases = [
     (2,12),
@@ -20,81 +24,89 @@ cases = [
 ]
 
 class Node:
-    def __init__(self, bin_config: list[bool]) -> None:
+    def __init__(self, bin_config: list[bool], con_sizes: tuple[float, float]):
         self.bin_config = bin_config
+        self.con_sizes = con_sizes
+        self.con_size = con_sizes[0] * con_sizes[1]
 
-    def valid_config() -> bool:
-        pass
+    def valid_config(self) -> bool:
+        temp_size = 0
+        used_rects = []
+        for element, decision in zip(cases, self.bin_config):
+            if decision:
+                used_rects.append(element)
+                w, h = element
+                temp_size += w * h
+                if temp_size > self.con_size:
+                    return False
+        config = pack_rects(used_rects, self.con_sizes)
+        if config is None:
+            return False
+        else:
+            self.config = config
+        return True
 
-    def heuristic(self, container_size: float) -> float:
+    def heuristic(self) -> float:
         priority_queue = queue.PriorityQueue()
-        for width, height in cases:
+        not_used_cases = cases[len(self.bin_config):]
+        for width, height in not_used_cases:
             priority_queue.put(width * height)
         temp_size = 0
         size = 0
         val = 0
         while True:
             temp_size = priority_queue.get()
-            if size + temp_size >= container_size:
-                val += (container_size - size) / temp_size
+            if size + temp_size >= self.con_size:
+                val += (self.con_size - size) / temp_size
                 return val
             else:
                 size += temp_size
                 val += 1 
 
     def children(self) -> list:
-        node_false = Node(self.bin_config + [False])
-        node_true = Node(self.bin_config + [True])
+        node_false = Node(self.bin_config + [False], self.con_sizes)
+        node_true = Node(self.bin_config + [True], self.con_sizes)
         return [node_false, node_true]
 
     def final(self) -> bool:
         return len(self.bin_config) == len(cases)
+    
+    def profit(self) -> int:
+        if not self.valid_config():
+            return  -MAX_INT
+        return sum(self.bin_config)
+    
+    def value(self) -> float:
+        return self.profit() + self.heuristic()
 
 
 def a_star():
-# 1.  Initialize the open list
-    opendList = []
-
-# 2.  Initialize the closed list
-#     put the starting node on the open 
-#     list (you can leave its f at zero)
+    max_profit = 0
+    best_configuration = None
     priority_queue = queue.PriorityQueue()
-    prime_node = Node([])
-    priority_queue.put(0, prime_node)
-# 3.  while the open list is not empty
-#     a) find the node with the least f on 
-#        the open list, call it "q"
-    # while len(nodes) != 0:
+    prime_node = Node([], (18, 18))
+    priority_queue.put((-prime_node.value(), prime_node))
+    # if PLOT:
+    #     initialize_plot(, config_rects)
+    while not priority_queue.empty():
+        node = priority_queue.get()[1]
+        for child in node.children():
+            if child.final():
+                profit = child.profit()
+                if profit > max_profit:
+                    max_profit = profit
+                    best_configuration = child.config
+                else:
+                    value = child.profit() + child.heuristic()
+                    if value > max_profit:
+                        priority_queue.put((-value, child))
+            else:
+                value = child.value()
+                if value > 0:
+                    priority_queue.put((-value, child))
+    return best_configuration
 
 
-#     b) pop q off the open list
-  
-#     c) generate q's 8 successors and set their 
-#        parents to q
-   
-#     d) for each successor
-#         i) if successor is the goal, stop search
-        
-#         ii) else, compute both g and h for successor
-#           successor.g = q.g + distance between 
-#                               successor and q
-#           successor.h = distance from goal to 
-#           successor (This can be done using many 
-#           ways, we will discuss three heuristics- 
-#           Manhattan, Diagonal and Euclidean 
-#           Heuristics)
-          
-#           successor.f = successor.g + successor.h
 
-#         iii) if a node with the same position as 
-#             successor is in the OPEN list which has a 
-#            lower f than successor, skip this successor
-
-#         iV) if a node with the same position as 
-#             successor  is in the CLOSED list which has
-#             a lower f than successor, skip this successor
-#             otherwise, add  the node to the open list
-#      end (for loop)
-  
-#     e) push q on the closed list
-#     end (while loop)
+if __name__ == "__main__":
+    a_star()
