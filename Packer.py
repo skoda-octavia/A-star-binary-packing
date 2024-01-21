@@ -2,7 +2,7 @@ from Configuration import Configuration
 from Rectangle import Rectangle as Rect
 from copy import deepcopy, copy
 import matplotlib.pyplot as plt 
-from Plot import initialize_plot, update_temp_plot, clear_plot
+from Plot import initialize_plot, update_temp_plot, set_temp_config
 
 class Packer:
 
@@ -51,20 +51,17 @@ class Packer:
             for ccoa in config.L:
                 d = self.benefit_A1(ccoa, deepcopy(config))
                 if isinstance(d, Configuration):
-                    print("fount one")
                     return d
                 else:
                     if max_benefit < d:
                         max_benefit = d
                         best_ccoa = ccoa
-            print(f"Placed {max_benefit}, {len(config.not_packed_rects)} rects remaining")
+            # print(f"Placed {max_benefit}, {len(config.not_packed_rects)} rects remaining")
             config.place_rect(best_ccoa)
 
         if config.successful():
-            print("Found successful configuration")
             return config
         else:
-            print("Stopped with failure")
             return None
 
 
@@ -72,6 +69,7 @@ def pack_rects(rects: list[tuple], con_size: tuple[float, float]) -> Configurati
     config_rects = [Rect((0, 0), x[0], x[1], False) for x in rects]
     C = Configuration(size=con_size, not_packed_rects=copy(config_rects), packed_rects=[], plot=False)
     if Configuration.plotting:
+        set_temp_config(C, config_rects)
         update_temp_plot(C)
     packer = Packer(C)
     return packer.A1(C)
@@ -103,6 +101,7 @@ if __name__ == "__main__":
     C = Configuration(size=container_size, not_packed_rects=copy(rects), plot=False)
     if Configuration.plotting:
         initialize_plot(C, rects)
+        set_temp_config(C, rects)
         update_temp_plot(C)
     packer = Packer(C)
     C = packer.A1(C)

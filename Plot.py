@@ -64,8 +64,13 @@ def equals(a: float, b: float) -> bool:
     tolerance = 1e-10
     return math.isclose(a, b, abs_tol=tolerance)
 
+
+def set_temp_config(C, rects):
+    global all_config_rects
+    all_config_rects = rects
+
 def update_temp_plot(C):
-    global max_width_config
+    global max_width_global
     global all_config_rects
     global axs
 
@@ -73,22 +78,23 @@ def update_temp_plot(C):
     axs[1][0].clear()
     axs[1][1].clear()
 
-    axs[1][0].set_xlim([0, C.width / 2])
-    axs[1][0].set_ylim([0, C.height /2])
+    axs[1][0].set_xlim([0, C.width])
+    axs[1][0].set_ylim([0, C.height])
     axs[1][0].set_xticks(range(0, C.width + 1, 5))
     axs[1][0].set_yticks(range(0, C.width + 1, 5))
+    axs[1][0].set_title("Temp configuration")
     
 
     axs[1][1].set_xticks([])
     axs[1][1].set_yticks([])
-    axs[1][1].set_xlim([0, max_width_config])
-    axs[1][1].set_ylim([0, max_width_config])
+    axs[1][1].set_xlim([0, max_width_global /2])
+    axs[1][1].set_ylim([0, max_width_global /2])
     axs[1][1].set_title("Temp rects used")
 
     for rect in C.packed_rects:
         draw_rect(axs[1][0], (rect.placed_x, rect.placed_y), rect.width, rect.height, placed_rect_color, edge_color, alpha)
 
-    draw_rects_overview(axs[1][1], all_config_rects, C.not_packed_rects, max_width_config)
+    draw_rects_overview(axs[1][1], all_config_rects, C.packed_rects, max_width_config)
     plt.draw()
     plt.pause(PAUSE_TIME)
 
@@ -100,16 +106,16 @@ def update_gloabl_plot(C):
     max_width_global = sum([r.width for r in rects]) + 1 + len(rects)
     axs[0][0].clear()
     axs[0][1].clear()
-    axs[0][0].set_xlim([0, C.width / 2])
-    axs[0][0].set_ylim([0, C.height /2])
+    axs[0][0].set_xlim([0, C.width])
+    axs[0][0].set_ylim([0, C.height])
     axs[0][0].set_xticks(range(0, C.width + 1, 5))
     axs[0][0].set_yticks(range(0, C.width + 1, 5))
-    axs[0][0].set_title(f"Best configuration found {len(C.packed_rects)}/{len(rects)}")
+    axs[0][0].set_title(f"Best configuration found: {len(C.packed_rects)}/{len(rects)}")
 
     axs[0][1].set_xticks([])
     axs[0][1].set_yticks([])
-    axs[0][1].set_xlim([0, max_width_global])
-    axs[0][1].set_ylim([0, max_width_global])
+    axs[0][1].set_xlim([0, max_width_global / 2])
+    axs[0][1].set_ylim([0, max_width_global / 2])
     axs[0][1].set_title("Rects used")
 
     for rect in C.packed_rects:
@@ -123,6 +129,8 @@ def update_gloabl_plot(C):
 def draw_rects_overview(ax, all_rects: list, packed_rects: list, plot_max_width: float):
     tallest = 0
     current_pos = (1,1)
+    rects_number = len(all_rects)
+    placed = 0
 
     for rect in all_rects:
         w,h = rect.width, rect.height
@@ -139,10 +147,12 @@ def draw_rects_overview(ax, all_rects: list, packed_rects: list, plot_max_width:
         
         draw_rect(ax, current_pos, w, h, background_color=color, edge_color=edge_color,alpha=alpha)
         current_pos = (current_pos[0] + w + 1, current_pos[1])
-        
-        if plot_max_width * 0.7 < current_pos[0] + w + 1:
+        placed += 1
+
+        if placed > math.sqrt(rects_number):
             current_pos = (1, current_pos[1] + tallest + 1)
             tallest = 0
+            placed = 0
 
 def freeze():
     plt.ioff()

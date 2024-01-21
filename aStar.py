@@ -98,6 +98,7 @@ def a_star(prime_node: Node):
             if profit > max_profit:
                 max_profit = profit
                 best_configuration = node.config
+                print(f"Found configuration {profit}/{max_possible_profit}")
                 if Configuration.plotting:
                     update_gloabl_plot(best_configuration)
                 if profit == max_possible_profit:
@@ -120,13 +121,13 @@ cases = [
     (5,5),
     (7,2),
     (9,3),
-        (6,2),
+    (6,2),
     (4,6),
     (6,3),
     (10,3),
     (6,3),
-    (6,3),
-    (10,3)
+    # (6,3),
+    # (10,3)
 ]
 
 def run(
@@ -146,6 +147,11 @@ def run(
     prime_node = Node([])
     best_config = a_star(prime_node)
     if plotting:
+        freeze()
+    else:
+        cases_rects = [Rect((0, 0), x[0], x[1], False) for x in cases]
+        initialize_plot(best_config, cases_rects, container_size)
+        update_gloabl_plot(best_config)
         freeze()
 
 
