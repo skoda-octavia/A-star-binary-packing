@@ -76,8 +76,8 @@ def float_int_quality_test():
         set_seed(get_seed() + i)
         float_elem = generate_float_tuples(ELEMENTS_NUMBER, container_size[1], MAX_EL_LEN_RATIO, MIN_EL_LEN_RATIO)
         int_elem = generate_int_tuples(ELEMENTS_NUMBER, container_size[1], MAX_EL_LEN_RATIO, MIN_EL_LEN_RATIO)
-        reduce_sizes(container_size[0] * container_size[1], float_elem)
-        reduce_sizes(container_size[0] * container_size[1], int_elem)
+        reduce_sizes(container_size[0] * container_size[1] *ELEMENTS_RATIO, float_elem)
+        reduce_sizes(container_size[0] * container_size[1]*ELEMENTS_RATIO, int_elem)
         config = run(a_star, float_elem, container_size, False, False)
         if config is not None:
             float_sum += len(config.packed_rects)
@@ -90,4 +90,4 @@ def float_int_quality_test():
 
 
 if __name__ == "__main__":
-    float_int_comparation_test()
+    float_int_quality_test()
