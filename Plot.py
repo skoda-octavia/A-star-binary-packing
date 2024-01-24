@@ -4,7 +4,7 @@ from matplotlib.patches import Rectangle as PltRect
 from matplotlib.animation import FuncAnimation
 import math
 # Plot settings
-PAUSE_TIME = 0.001
+PAUSE_TIME = 0.0001
 placed_rect_color = 'lightblue'
 unplaced_rect_color = 'grey'
 edge_color = 'black'
