@@ -49,7 +49,7 @@ class Configuration:
             for corner, corner_type in possible_corners:
                 for rotated in [False, True]:
                     ccoa = Rect(corner, width, height, rotated, corner_type)
-                    if self.rect_fits(ccoa, corner_type):
+                    if self.rect_fits(ccoa):
                         ccoas.append(ccoa)
                     else:
                         continue
@@ -105,7 +105,7 @@ class Configuration:
                 return True
         return False
 
-    def rect_fits(self, ccoa: Rect, corner_type: CornerType) -> bool:
+    def rect_fits(self, ccoa: Rect) -> bool:
         for rect in self.packed_rects:
             if rect.overlaps(ccoa):
                 return False
@@ -129,9 +129,7 @@ class Configuration:
                 break
         if Configuration.plotting:
             update_temp_plot(self)
-        self.generate_L()
-        
-
+        self.generate_L()        
 
     def density(self) -> float:
         container_area = self.height * self.width

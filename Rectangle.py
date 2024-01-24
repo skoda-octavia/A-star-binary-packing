@@ -7,7 +7,7 @@ class Rectangle:
 
     def __init__(self, placed: tuple, width: float, height: float, rotated: bool, corner_type: CornerType=CornerType.NONE) -> None:
         self.set_width_height(width, height, rotated)
-        self.set_placed(placed, rotated, corner_type)
+        self.set_placed(placed, corner_type)
         self.set_tops()
 
     def __copy__(self):
@@ -30,7 +30,7 @@ class Rectangle:
         self.top_y = self.placed_y + self.height
 
 
-    def set_placed(self, placed: tuple, rotated: bool, corner_type: CornerType) -> None:
+    def set_placed(self, placed: tuple, corner_type: CornerType) -> None:
         if len(placed) != 2:
             raise ValueError("Placed arg not len of 2", placed)
         self.placed_x = placed[0]

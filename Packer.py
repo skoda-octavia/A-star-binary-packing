@@ -1,7 +1,6 @@
 from Configuration import Configuration
 from Rectangle import Rectangle as Rect
 from copy import deepcopy, copy
-import matplotlib.pyplot as plt 
 from Plot import initialize_plot, update_temp_plot, set_temp_config
 
 class Packer:
