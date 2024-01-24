@@ -63,9 +63,8 @@ def a_star_time_capture(prime_node: Node):
             for child in node.children():
                 if child.valid and child.value > max_profit:
                     priority_queue.put((-child.value, child))
-    times[max_profit] = end_time - start_time
     print(f"Found configuration {max_profit}/{max_possible_profit}")
-    return best_configuration, times
+    return best_configuration, times, end_time - start_time
 
 
 def run(
