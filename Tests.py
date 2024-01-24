@@ -105,7 +105,7 @@ def searching_time_test():
     tests_num = 10
     container_size: tuple[float, float]=(15, 15)
     times = []
-    tree_sizes = [i+1 for i in range(20)]
+    tree_sizes = [i+1 for i in range(16)]
     counter = 1
     for size in tree_sizes:
         temp_times = []
@@ -133,7 +133,7 @@ def searching_time_no_cut_test():
     container_size: tuple[float, float]=(15, 15)
     times_cut = []
     times_no_cut = []
-    tree_sizes = [i+1 for i in range(10)]
+    tree_sizes = [i+1 for i in range(11)]
     counter = 1
     for size in tree_sizes:
         temp_times_cut = []
@@ -147,12 +147,12 @@ def searching_time_no_cut_test():
             config = run(a_star, int_elem, container_size, False, False)
             end = time()
             temp_times_cut.append(end - start)
-            
+
             start = time()
             config = run(a_star_no_cut, int_elem, container_size, False, False)
             end = time()
             temp_times_no_cut.append(end - start)
-            
+
         mean_cut = sum(temp_times_cut)/len(temp_times_cut)
         mean_no_cut = sum(temp_times_no_cut)/len(temp_times_no_cut)
         times_cut.append(mean_cut)
@@ -164,6 +164,7 @@ def searching_time_no_cut_test():
     plt.title("Searching time comparison cut/no cut for tree size")
     plt.xlabel("tree size")
     plt.ylabel("avg searching time")
+    plt.legend()
     plt.show()
 
 
