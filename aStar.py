@@ -66,31 +66,12 @@ def a_star_time_capture(prime_node: Node):
     return best_configuration, times
 
 
-cases = [
-    (4,1),
-    (4,5),
-    (9,4),
-    (3,5),
-    (3,9),
-    (1,4),
-    (5,3),
-    (4,1),
-    (5,5),
-    (7,2),
-    (9,3),
-    (6,2),
-    (4,6),
-    (6,3),
-    (10,3),
-    (6,3),
-    # (6,3),
-    # (10,3)
-]
-
 def run(
+        func: callable,
         cases: list[tuple[float, float]],
         container_size: tuple[float, float]=(15, 15),
-        plotting: bool=True
+        plotting: bool=True,
+        final_plot: bool=True
         ):
     if plotting:
         cases_rects = [Rect((0, 0), x[0], x[1], False) for x in cases]
@@ -102,18 +83,12 @@ def run(
     Node.con_sizes = container_size
     Node.con_area = container_size[0] * container_size[1]
     prime_node = Node([])
-    best_config = a_star(prime_node)
+    resoult = func(prime_node)
     if plotting:
         freeze()
-    else:
+    elif final_plot:
         cases_rects = [Rect((0, 0), x[0], x[1], False) for x in cases]
-        initialize_plot(best_config, cases_rects, container_size)
-        update_gloabl_plot(best_config)
+        initialize_plot(resoult, cases_rects, container_size)
+        update_gloabl_plot(resoult)
         freeze()
-
-
-if __name__ == "__main__":
-    start = time()
-    run(cases, plotting=False)
-    end = time()
-    print(end-start)
+    return resoult
