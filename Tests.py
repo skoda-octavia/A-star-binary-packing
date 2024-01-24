@@ -66,7 +66,7 @@ def get_stats(times_dict: dict, number_dict: dict, total_times) -> tuple[list, l
 
 
 def float_int_comparation_test():
-    tests_num = 2
+    tests_num = 15
     int_dict_times = {i: 0 for i in range(ELEMENTS_NUMBER + 1)}
     float_dict_times = {i: 0 for i in range(ELEMENTS_NUMBER + 1)}
     container_size: tuple[float, float]=(15, 15)

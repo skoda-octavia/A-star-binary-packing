@@ -12,7 +12,7 @@ class DeterministicPriorityQueue(queue.PriorityQueue):
 
     def put(self, item):
         super().put((item[0], self.counter, item[1]))
-        self.counter += 1 
+        self.counter += 1
 
 def a_star(prime_node: Node):
     max_profit = 0
@@ -63,6 +63,7 @@ def a_star_time_capture(prime_node: Node):
             for child in node.children():
                 if child.valid and child.value > max_profit:
                     priority_queue.put((-child.value, child))
+    end_time = time()
     print(f"Found configuration {max_profit}/{max_possible_profit}")
     return best_configuration, times, end_time - start_time
 
