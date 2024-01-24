@@ -19,13 +19,15 @@ max_width_global = 0
 def argmax(lst):
     return lst.index(max(lst))
 
+def set_interactive():
+    plt.ion()
+
+def show_plt():
+    plt.show()
 
 def clear_plot():
-    global all_rects
-    global max_width
-    all_rects = []
-    max_width = 0
-    plt.clf()
+    plt.ioff()
+    plt.close('all')
 
 def initialize_plot(C, all_rects, plot_size):
     global max_width_global
@@ -33,8 +35,6 @@ def initialize_plot(C, all_rects, plot_size):
     global axs
     global rects
 
-
-    plt.ion()
     fig, axs = plt.subplots(nrows=2, ncols=2, figsize=plot_size)
     rects = all_rects
     max_width_global = sum([r.width for r in all_rects]) + 1 + len(all_rects)
@@ -95,6 +95,7 @@ def update_temp_plot(C):
         draw_rect(axs[1][0], (rect.placed_x, rect.placed_y), rect.width, rect.height, placed_rect_color, edge_color, alpha)
 
     draw_rects_overview(axs[1][1], all_config_rects, C.packed_rects, max_width_config)
+
     plt.draw()
     plt.pause(PAUSE_TIME)
 
@@ -122,9 +123,9 @@ def update_gloabl_plot(C):
         draw_rect(axs[0][0], (rect.placed_x, rect.placed_y), rect.width, rect.height, placed_rect_color, edge_color, alpha)
 
     draw_rects_overview(axs[0][1], rects, C.packed_rects, max_width_global)
+    
     plt.draw()
     plt.pause(PAUSE_TIME)
-
 
 def draw_rects_overview(ax, all_rects: list, packed_rects: list, plot_max_width: float):
     tallest = 0

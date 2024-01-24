@@ -1,9 +1,10 @@
 from Configuration import Configuration
-from Plot import initialize_plot, update_gloabl_plot, freeze
+from Plot import initialize_plot, update_gloabl_plot, freeze, clear_plot, show_plt, set_interactive
 from Rectangle import Rectangle as Rect
 from Node import Node
 from aStar import a_star
 from time import time
+import matplotlib.pyplot as plt
 
 cases = [
     (4,1),
@@ -15,13 +16,13 @@ cases = [
     (5,3),
     (4,1),
     (5,5),
-    (7,2),
-    (9,3),
-    (6,2),
-    (4,6),
-    (6,3),
-    (10,3),
-    (6,3),
+    # (7,2),
+    # (9,3),
+    # (6,2),
+    # (4,6),
+    # (6,3),
+    # (10,3),
+    # (6,3),
     # (6,3),
     # (10,3)
 ]
@@ -31,10 +32,10 @@ def main(
         container_size: tuple[float, float]=(15, 15),
         plotting: bool=True
         ):
-    
     if plotting:
         cases_rects = [Rect((0, 0), x[0], x[1], False) for x in cases]
         config = Configuration(container_size, cases_rects, plot=False)
+        set_interactive()
         initialize_plot(config, cases_rects, container_size)
         update_gloabl_plot(config)
     Configuration.plotting = plotting
@@ -45,11 +46,13 @@ def main(
     best_config = a_star(prime_node)
     if plotting:
         freeze()
-    else:
-        cases_rects = [Rect((0, 0), x[0], x[1], False) for x in cases]
-        initialize_plot(best_config, cases_rects, container_size)
-        update_gloabl_plot(best_config)
-        freeze()
+    clear_plot()
+    cases_rects = [Rect((0, 0), x[0], x[1], False) for x in cases]
+    initialize_plot(best_config, cases_rects, container_size)
+    update_gloabl_plot(best_config)
+    show_plt()
+    
+
 
 
 if __name__ == "__main__":
