@@ -22,6 +22,7 @@ class Node:
         if parent_config is not None:
             self.config = parent_config
             self.valid = True
+            return
         temp_size = 0
         used_rects = []
         for element, decision in zip(Node.all_rects, self.bin_config):
@@ -31,9 +32,11 @@ class Node:
                 temp_size += w * h
                 if temp_size > Node.con_area:
                     self.valid = False
+                    return
         config = pack_rects(used_rects, Node.con_sizes)
         if config is None:
             self.valid = False
+            return
         else:
             self.config = config
         self.valid = True
@@ -52,6 +55,7 @@ class Node:
             if size + temp_size >= Node.con_area:
                 val += (Node.con_area - size) / temp_size
                 self.heuristic = val
+                return
             else:
                 size += temp_size
                 val += 1 
@@ -68,6 +72,7 @@ class Node:
     def set_profit(self) -> int:
         if not self.valid:
             self.profit = -MAX_INT
+            return
         self.profit = sum(self.bin_config)
     
     def set_value(self) -> float:

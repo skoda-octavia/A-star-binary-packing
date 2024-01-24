@@ -3,8 +3,7 @@ from Plot import initialize_plot, update_gloabl_plot, freeze
 from Rectangle import Rectangle as Rect
 from Configuration import Configuration
 from Node import Node
-
-
+from time import time
 
 class DeterministicPriorityQueue(queue.PriorityQueue):
     def __init__(self):
@@ -24,7 +23,7 @@ def a_star(prime_node: Node):
     while not priority_queue.empty():
         node = priority_queue.get()[2]
         profit = node.profit
-        if profit > max_profit:
+        if profit > max_profit and node.valid:
             max_profit = profit
             best_configuration = node.config
             print(f"Found configuration {profit}/{max_possible_profit}")
@@ -37,6 +36,35 @@ def a_star(prime_node: Node):
                 if child.valid and child.value > max_profit:
                     priority_queue.put((-child.value, child))
     return best_configuration
+
+
+def a_star_time_capture(prime_node: Node):
+    times = {}
+    max_profit = 0
+    max_possible_profit = len(Node.all_rects)
+    best_configuration = None
+    priority_queue = DeterministicPriorityQueue()
+    priority_queue.put((-prime_node.value, prime_node))
+    start_time = time()
+    while not priority_queue.empty():
+        node = priority_queue.get()[2]
+        profit = node.profit
+        if profit > max_profit:
+            end_time = time()
+            max_profit = profit
+            best_configuration = node.config
+            times[max_profit] = end_time - start_time
+            print(f"Found configuration {profit}/{max_possible_profit}")
+            if Configuration.plotting:
+                update_gloabl_plot(best_configuration)
+            if profit == max_possible_profit:
+                return best_configuration
+        if not node.final:
+            for child in node.children():
+                if child.valid and child.value > max_profit:
+                    priority_queue.put((-child.value, child))
+    return best_configuration, times
+
 
 cases = [
     (4,1),
@@ -85,4 +113,7 @@ def run(
 
 
 if __name__ == "__main__":
-    run(cases)
+    start = time()
+    run(cases, plotting=False)
+    end = time()
+    print(end-start)
