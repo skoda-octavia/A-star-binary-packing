@@ -67,6 +67,28 @@ def a_star_time_capture(prime_node: Node):
     print(f"Found configuration {max_profit}/{max_possible_profit}")
     return best_configuration, times, end_time - start_time
 
+def a_star_no_cut(prime_node: Node):
+    max_profit = 0
+    max_possible_profit = len(Node.all_rects)
+    best_configuration = None
+    priority_queue = DeterministicPriorityQueue()
+    priority_queue.put((-prime_node.value, prime_node))
+    while not priority_queue.empty():
+        node = priority_queue.get()[2]
+        profit = node.profit
+        if profit > max_profit and node.valid:
+            max_profit = profit
+            best_configuration = node.config
+            print(f"Found configuration {profit}/{max_possible_profit}")
+            if Configuration.plotting:
+                update_gloabl_plot(best_configuration)
+            if profit == max_possible_profit:
+                return best_configuration
+        if not node.final:
+            for child in node.children():
+                priority_queue.put((-child.value, child))
+    return best_configuration
+
 
 def run(
         func: callable,

@@ -1,5 +1,5 @@
 import random
-from aStar import run, a_star, a_star_time_capture
+from aStar import run, a_star, a_star_time_capture, a_star_no_cut
 from matplotlib import pyplot as plt
 from time import time
 
@@ -128,6 +128,45 @@ def searching_time_test():
     plt.show()
 
 
+def searching_time_no_cut_test():
+    tests_num = 10
+    container_size: tuple[float, float]=(15, 15)
+    times_cut = []
+    times_no_cut = []
+    tree_sizes = [i+1 for i in range(10)]
+    counter = 1
+    for size in tree_sizes:
+        temp_times_cut = []
+        temp_times_no_cut = []
+        for i in range(tests_num):
+            set_seed(get_seed() + counter)
+            counter += 1
+            int_elem = generate_int_tuples(size, container_size[1], MAX_EL_LEN_RATIO, MIN_EL_LEN_RATIO)
+            reduce_sizes(container_size[0] * container_size[1]*ELEMENTS_RATIO, int_elem)
+            start = time()
+            config = run(a_star, int_elem, container_size, False, False)
+            end = time()
+            temp_times_cut.append(end - start)
+            
+            start = time()
+            config = run(a_star_no_cut, int_elem, container_size, False, False)
+            end = time()
+            temp_times_no_cut.append(end - start)
+            
+        mean_cut = sum(temp_times_cut)/len(temp_times_cut)
+        mean_no_cut = sum(temp_times_no_cut)/len(temp_times_no_cut)
+        times_cut.append(mean_cut)
+        times_no_cut.append(mean_no_cut)
+        print(f"Searching time cut mean for size {size}: {mean_cut}")
+        print(f"Searching time no cut mean for size {size}: {mean_no_cut}")
+    plt.plot(tree_sizes, times_cut, label="cut")
+    plt.plot(tree_sizes, times_no_cut, label="no cut")
+    plt.title("Searching time comparison cut/no cut for tree size")
+    plt.xlabel("tree size")
+    plt.ylabel("avg searching time")
+    plt.show()
+
+
 def float_int_quality_test():
     tests_num = 10
     int_sum = 0
@@ -152,4 +191,4 @@ def float_int_quality_test():
 
 
 if __name__ == "__main__":
-    searching_time_test()
+    searching_time_no_cut_test()

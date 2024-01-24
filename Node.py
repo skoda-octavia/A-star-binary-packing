@@ -32,10 +32,12 @@ class Node:
                 temp_size += w * h
                 if temp_size > Node.con_area:
                     self.valid = False
+                    self.config = None
                     return
         config = pack_rects(used_rects, Node.con_sizes)
         if config is None:
             self.valid = False
+            self.config = None
             return
         else:
             self.config = config
