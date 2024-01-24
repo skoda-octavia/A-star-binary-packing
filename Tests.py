@@ -1,6 +1,7 @@
 import random
 from aStar import run, a_star, a_star_time_capture
 from matplotlib import pyplot as plt
+from time import time
 
 ELEMENTS_RATIO = 1.3
 ELEMENTS_NUMBER = 16
@@ -100,7 +101,31 @@ def float_int_comparation_test():
     plt.show()
 
 
-
+def searching_time_test():
+    tests_num = 10
+    container_size: tuple[float, float]=(15, 15)
+    times = []
+    tree_sizes = [i+1 for i in range(20)]
+    counter = 1
+    for size in tree_sizes:
+        temp_times = []
+        for i in range(tests_num):
+            set_seed(get_seed() + counter)
+            counter += 1
+            int_elem = generate_int_tuples(size, container_size[1], MAX_EL_LEN_RATIO, MIN_EL_LEN_RATIO)
+            reduce_sizes(container_size[0] * container_size[1]*ELEMENTS_RATIO, int_elem)
+            start = time()
+            config = run(a_star, int_elem, container_size, False, False)
+            end = time()
+            temp_times.append(end - start)
+        mean = sum(temp_times)/len(temp_times)
+        times.append(mean)
+        print(f"Searching time mean for size {size}: {mean}")
+    plt.plot(tree_sizes, times)
+    plt.title("Avarage searching time for tree size")
+    plt.xlabel("tree size")
+    plt.ylabel("avg searching time")
+    plt.show()
 
 
 def float_int_quality_test():
@@ -127,4 +152,4 @@ def float_int_quality_test():
 
 
 if __name__ == "__main__":
-    float_int_comparation_test()
+    searching_time_test()
