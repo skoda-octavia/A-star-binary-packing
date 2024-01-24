@@ -58,7 +58,7 @@ def get_stats(times_dict: dict, number_dict: dict) -> tuple[list, list]:
     values = []
     for quality, number in number_dict.items():
         if number > 0:
-            values.append(number)
+            values.append(quality)
             times.append(times_dict[quality] / number)
     return values, times
 
