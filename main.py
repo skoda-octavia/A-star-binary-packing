@@ -31,6 +31,7 @@ def main(
         container_size: tuple[float, float]=(15, 15),
         plotting: bool=True
         ):
+    
     if plotting:
         cases_rects = [Rect((0, 0), x[0], x[1], False) for x in cases]
         config = Configuration(container_size, cases_rects, plot=False)

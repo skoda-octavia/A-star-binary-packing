@@ -40,6 +40,7 @@ def a_star(prime_node: Node):
 
 def a_star_time_capture(prime_node: Node):
     times = {}
+    times[0] = 0
     max_profit = 0
     max_possible_profit = len(Node.all_rects)
     best_configuration = None
@@ -54,7 +55,6 @@ def a_star_time_capture(prime_node: Node):
             max_profit = profit
             best_configuration = node.config
             times[max_profit] = end_time - start_time
-            print(f"Found configuration {profit}/{max_possible_profit}")
             if Configuration.plotting:
                 update_gloabl_plot(best_configuration)
             if profit == max_possible_profit:
@@ -63,6 +63,8 @@ def a_star_time_capture(prime_node: Node):
             for child in node.children():
                 if child.valid and child.value > max_profit:
                     priority_queue.put((-child.value, child))
+    times[max_profit] = end_time - start_time
+    print(f"Found configuration {max_profit}/{max_possible_profit}")
     return best_configuration, times
 
 

@@ -1,5 +1,6 @@
 import random
 from aStar import run, a_star, a_star_time_capture
+from matplotlib import pyplot as plt
 
 ELEMENTS_RATIO = 1.3
 ELEMENTS_NUMBER = 16
@@ -46,25 +47,54 @@ def generate_int_tuples(num_tuples, con_len, max_elem_ratio, min_elem_ratio):
         tuples.append((int1, int2))
     return tuples
 
-def float_int_comparation_test():
-    cases: list[tuple[float, float]]
-    container_size: tuple[float, float]=(15, 15)
-    plotting: bool=True
-    float_elem = generate_float_tuples(ELEMENTS_NUMBER, container_size[1], MAX_EL_LEN_RATIO, MIN_EL_LEN_RATIO)
-    int_elem = generate_int_tuples(ELEMENTS_NUMBER, container_size[1], MAX_EL_LEN_RATIO, MIN_EL_LEN_RATIO)
-    reduce_sizes(container_size[0] * container_size[1], float_elem)
-    reduce_sizes(container_size[0] * container_size[1], int_elem)
-    float_size = 0
-    for tup in float_elem:
-        float_size += tup[0] * tup[1]
-        print(tup)
-    print(float_size)
+def add_dictionaries(time_dict: dict, temp_time_dict: dict, number_of_founds: dict):
+    for key, val in temp_time_dict.items():
+        time_dict[key] += val
+        if val > 0:
+            number_of_founds[key] += 1
 
-    el_sizes = 0
-    for ints in int_elem:
-        print(ints)
-        el_sizes += ints[0] * ints[1]
-    print(el_sizes)
+def get_stats(times_dict: dict, number_dict: dict) -> tuple[list, list]:
+    times = []
+    values = []
+    for quality, number in number_dict.items():
+        if number > 0:
+            values.append(number)
+            times.append(times_dict[quality] / number)
+    return values, times
+
+
+def float_int_comparation_test():
+    tests_num = 2
+    int_dict_times = {i: 0 for i in range(ELEMENTS_NUMBER + 1)}
+    float_dict_times = {i: 0 for i in range(ELEMENTS_NUMBER + 1)}
+    container_size: tuple[float, float]=(15, 15)
+    number_of_found_ints = {i: 0 for i in range(ELEMENTS_NUMBER)}
+    number_of_found_floats = {i: 0 for i in range(ELEMENTS_NUMBER)}
+    for i in range(tests_num):
+        set_seed(get_seed() + i)
+        float_elem = generate_float_tuples(ELEMENTS_NUMBER, container_size[1], MAX_EL_LEN_RATIO, MIN_EL_LEN_RATIO)
+        int_elem = generate_int_tuples(ELEMENTS_NUMBER, container_size[1], MAX_EL_LEN_RATIO, MIN_EL_LEN_RATIO)
+        reduce_sizes(container_size[0] * container_size[1] *ELEMENTS_RATIO, float_elem)
+        reduce_sizes(container_size[0] * container_size[1]*ELEMENTS_RATIO, int_elem)
+        config, times_float = run(a_star_time_capture, float_elem, container_size, False, False)
+        if config is not None:
+            add_dictionaries(float_dict_times, times_float, number_of_found_floats)
+        config, temp_int_dict = run(a_star_time_capture, int_elem, container_size, False, False)
+        if config is not None:
+            add_dictionaries(int_dict_times, temp_int_dict, number_of_found_ints)
+
+    values_ints, times_ints = get_stats(int_dict_times, number_of_found_ints)
+    values_floats, times_floats = get_stats(float_dict_times, number_of_found_floats)
+    plt.plot(times_ints, values_ints, label="integers")
+    plt.plot(times_floats, values_floats, label="floats")
+    plt.legend()
+    plt.title('Values found in time')
+    plt.xlabel('mean of times')
+    plt.ylabel('values')
+    plt.show()
+
+
+
 
 
 def float_int_quality_test():
@@ -89,5 +119,6 @@ def float_int_quality_test():
 
 
 
+
 if __name__ == "__main__":
-    float_int_quality_test()
+    float_int_comparation_test()
