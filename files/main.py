@@ -55,6 +55,6 @@ def main(
 
 if __name__ == "__main__":
     start = time()
-    main(cases, plotting=False)
+    main(cases, plotting=True)
     end = time()
     print(end-start)
