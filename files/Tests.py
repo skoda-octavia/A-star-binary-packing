@@ -63,6 +63,8 @@ def get_stats(times_dict: dict, number_dict: dict, total_times: list, maxes_foun
     all_found_this = min(maxes_found)
     for quality, number in number_dict.items():
         if quality == all_found_this:
+            values.append(quality)
+            times.append(times_dict[quality] / number)
             values.append(sum(maxes_found) / len(maxes_found))
             times.append(sum(max_time_found) / len(max_time_found))
             break
@@ -77,7 +79,7 @@ def get_stats(times_dict: dict, number_dict: dict, total_times: list, maxes_foun
 
 
 def float_int_comparation_test():
-    tests_num = 2
+    tests_num = 30
     int_dict_times = {i: 0 for i in range(ELEMENTS_NUMBER + 1)}
     float_dict_times = {i: 0 for i in range(ELEMENTS_NUMBER + 1)}
     container_size: tuple[float, float]=(15, 15)
@@ -90,6 +92,7 @@ def float_int_comparation_test():
     max_time_float = []
     max_time_int = []
     for i in range(tests_num):
+        print(i)
         set_seed(get_seed() + i)
         float_elem = generate_float_tuples(ELEMENTS_NUMBER, container_size[1], MAX_EL_LEN_RATIO, MIN_EL_LEN_RATIO)
         int_elem = generate_int_tuples(ELEMENTS_NUMBER, container_size[1], MAX_EL_LEN_RATIO, MIN_EL_LEN_RATIO)
