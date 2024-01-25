@@ -52,29 +52,43 @@ def add_dictionaries(time_dict: dict, temp_time_dict: dict, number_of_founds: di
     for key, val in temp_time_dict.items():
         time_dict[key] += val
         if val > 0:
-            number_of_founds[key] += 1
+            if key in number_of_founds:
+                number_of_founds[key] += 1
+            else:
+                number_of_founds[key] = 1
 
-def get_stats(times_dict: dict, number_dict: dict, total_times) -> tuple[list, list]:
+def get_stats(times_dict: dict, number_dict: dict, total_times: list, maxes_found: list, max_time_found: list) -> tuple[list, list]:
     times = []
     values = []
+    all_found_this = min(maxes_found)
     for quality, number in number_dict.items():
+        if quality == all_found_this:
+            values.append(sum(maxes_found) / len(maxes_found))
+            times.append(sum(max_time_found) / len(max_time_found))
+            break
         if number > 0:
             values.append(quality)
             times.append(times_dict[quality] / number)
+        elif number == 0 and quality != 0:
+            break
     values.append(values[-1])
     times.append(sum(total_times) / len(total_times))
     return values, times
 
 
 def float_int_comparation_test():
-    tests_num = 15
+    tests_num = 2
     int_dict_times = {i: 0 for i in range(ELEMENTS_NUMBER + 1)}
     float_dict_times = {i: 0 for i in range(ELEMENTS_NUMBER + 1)}
     container_size: tuple[float, float]=(15, 15)
-    number_of_found_ints = {i: 0 for i in range(ELEMENTS_NUMBER)}
-    number_of_found_floats = {i: 0 for i in range(ELEMENTS_NUMBER)}
+    number_of_found_ints = {}
+    number_of_found_floats = {}
     total_times_floats = []
     total_times_ints = []
+    max_found_int = []
+    max_found_float = []
+    max_time_float = []
+    max_time_int = []
     for i in range(tests_num):
         set_seed(get_seed() + i)
         float_elem = generate_float_tuples(ELEMENTS_NUMBER, container_size[1], MAX_EL_LEN_RATIO, MIN_EL_LEN_RATIO)
@@ -83,15 +97,18 @@ def float_int_comparation_test():
         reduce_sizes(container_size[0] * container_size[1]*ELEMENTS_RATIO, int_elem)
         config, times_float, total_time = run(a_star_time_capture, float_elem, container_size, False, False)
         if config is not None:
+            max_found_float.append(len(config.packed_rects))
+            max_time_float.append(times_float[max(times_float.keys())])
             total_times_floats.append(total_time)
             add_dictionaries(float_dict_times, times_float, number_of_found_floats)
         config, temp_int_dict, total_time = run(a_star_time_capture, int_elem, container_size, False, False)
         if config is not None:
+            max_time_int.append(temp_int_dict[max(temp_int_dict.keys())])
+            max_found_int.append(len(config.packed_rects))
             total_times_ints.append(total_time)
             add_dictionaries(int_dict_times, temp_int_dict, number_of_found_ints)
-
-    values_ints, times_ints = get_stats(int_dict_times, number_of_found_ints, total_times_ints)
-    values_floats, times_floats = get_stats(float_dict_times, number_of_found_floats, total_times_floats)
+    values_ints, times_ints = get_stats(int_dict_times, number_of_found_ints, total_times_ints, max_found_int, max_time_int)
+    values_floats, times_floats = get_stats(float_dict_times, number_of_found_floats, total_times_floats, max_found_int, max_time_float)
     plt.plot(times_ints, values_ints, label="integers")
     plt.plot(times_floats, values_floats, label="floats")
     plt.legend()
@@ -99,6 +116,26 @@ def float_int_comparation_test():
     plt.xlabel('mean of times')
     plt.ylabel('values')
     plt.show()
+
+def rectangular_container_test():
+    test_num = 10
+    len = 15
+    sizes = []
+    con_area = len * len
+    test_sets = []
+    for i in range(test_num):
+        set_seed(get_seed() + i)
+        int_elem = generate_int_tuples(ELEMENTS_NUMBER, len, MAX_EL_LEN_RATIO, MIN_EL_LEN_RATIO)
+        reduce_sizes(con_area *ELEMENTS_RATIO, int_elem)
+        test_sets.append(int_elem)
+    sizes.append((len, len))
+    while len != 9:
+        len -= 1
+        height = con_area / len
+        sizes.append(len, height)
+    for container_size in sizes:
+        for rects_set in test_sets:
+            config, times_float, total_time = run(a_star_time_capture, rects_set, container_size, False, False)
 
 
 def searching_time_test():
@@ -168,6 +205,9 @@ def searching_time_no_cut_test():
     plt.show()
 
 
+
+
+
 def float_int_quality_test():
     tests_num = 10
     int_sum = 0
@@ -192,4 +232,4 @@ def float_int_quality_test():
 
 
 if __name__ == "__main__":
-    searching_time_no_cut_test()
+    float_int_comparation_test()

@@ -16,13 +16,13 @@ cases = [
     (5,3),
     (4,1),
     (5,5),
-    # (7,2),
-    # (9,3),
-    # (6,2),
-    # (4,6),
-    # (6,3),
-    # (10,3),
-    # (6,3),
+    (7,2),
+    (9,3),
+    (6,2),
+    (4,6),
+    (6,3),
+    (10,3),
+    (6,3),
     # (6,3),
     # (10,3)
 ]
@@ -46,17 +46,15 @@ def main(
     best_config = a_star(prime_node)
     if plotting:
         freeze()
-    clear_plot()
-    cases_rects = [Rect((0, 0), x[0], x[1], False) for x in cases]
-    initialize_plot(best_config, cases_rects, container_size)
-    update_gloabl_plot(best_config)
-    show_plt()
+    else:
+        cases_rects = [Rect((0, 0), x[0], x[1], False) for x in cases]
+        initialize_plot(best_config, cases_rects, container_size)
+        update_gloabl_plot(best_config)
+        show_plt()
     
-
-
 
 if __name__ == "__main__":
     start = time()
-    main(cases, plotting=True)
+    main(cases, plotting=False)
     end = time()
     print(end-start)
