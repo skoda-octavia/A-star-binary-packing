@@ -78,9 +78,10 @@ def get_stats(times_dict: dict, number_dict: dict, total_times: list, maxes_foun
 
 def float_int_comparation_test():
     tests_num = 2
+    container_size: tuple[float, float]=(15, 15)
     int_dict_times = {i: 0 for i in range(ELEMENTS_NUMBER + 1)}
     float_dict_times = {i: 0 for i in range(ELEMENTS_NUMBER + 1)}
-    container_size: tuple[float, float]=(15, 15)
+    
     number_of_found_ints = {}
     number_of_found_floats = {}
     total_times_floats = []
@@ -118,26 +119,43 @@ def float_int_comparation_test():
     plt.show()
 
 def rectangular_container_test():
-    test_num = 10
-    len = 15
-    sizes = []
-    con_area = len * len
+    test_num = 2
+    length = 20
+    sizes = [
+        (20, 20),
+        (16, 25),
+        (10, 40),
+        (8, 50),
+        (4, 100)
+    ]
+    con_area = length * length
     test_sets = []
     for i in range(test_num):
         set_seed(get_seed() + i)
-        int_elem = generate_int_tuples(ELEMENTS_NUMBER, len, MAX_EL_LEN_RATIO, MIN_EL_LEN_RATIO)
+        int_elem = generate_int_tuples(ELEMENTS_NUMBER, length, MAX_EL_LEN_RATIO, MIN_EL_LEN_RATIO)
         reduce_sizes(con_area *ELEMENTS_RATIO, int_elem)
         test_sets.append(int_elem)
-    sizes.append((len, len))
-    while len != 9:
-        len -= 1
-        height = con_area / len
-        sizes.append(len, height)
     for container_size in sizes:
+        number_of_found_ints = {}
+        total_times_ints = []
+        max_found_int = []
+        max_time_int = []
+        int_dict_times = {i: 0 for i in range(ELEMENTS_NUMBER + 1)}
         for rects_set in test_sets:
-            config, times_float, total_time = run(a_star_time_capture, rects_set, container_size, False, False)
-
-
+            config, temp_int_dict, total_time = run(a_star_time_capture, rects_set, container_size, False, False)
+            if config is not None:
+                max_time_int.append(temp_int_dict[max(temp_int_dict.keys())])
+                max_found_int.append(len(config.packed_rects))
+                total_times_ints.append(total_time)
+                add_dictionaries(int_dict_times, temp_int_dict, number_of_found_ints)
+        values_ints, times_ints = get_stats(int_dict_times, number_of_found_ints, total_times_ints, max_found_int, max_time_int)
+        plt.plot(times_ints, values_ints, label=f"rect {container_size[0]}x{container_size[1]}")
+    plt.legend()
+    plt.title('Values found in time')
+    plt.xlabel('avg time [s]')
+    plt.ylabel('avg value')
+    plt.show()
+        
 def searching_time_test():
     tests_num = 10
     container_size: tuple[float, float]=(15, 15)
@@ -206,8 +224,6 @@ def searching_time_no_cut_test():
 
 
 
-
-
 def float_int_quality_test():
     tests_num = 10
     int_sum = 0
@@ -232,4 +248,4 @@ def float_int_quality_test():
 
 
 if __name__ == "__main__":
-    float_int_comparation_test()
+    rectangular_container_test()
