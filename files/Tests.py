@@ -122,7 +122,7 @@ def float_int_comparation_test():
     plt.show()
 
 def rectangular_container_test():
-    test_num = 2
+    test_num = 15
     length = 20
     sizes = [
         (20, 20),
