@@ -78,7 +78,7 @@ def get_stats(times_dict: dict, number_dict: dict, total_times: list, maxes_foun
     return values, times
 
 
-def float_int_comparation_test():
+def float_int_comparison_test():
     container_size: tuple[float, float]=(15, 15)
     tests_num = 30
     int_dict_times = {i: 0 for i in range(ELEMENTS_NUMBER + 1)}
@@ -252,3 +252,7 @@ def float_int_quality_test():
 
 if __name__ == "__main__":
     rectangular_container_test()
+    float_int_comparison_test()
+    searching_time_test()
+    searching_time_no_cut_test()
+    float_int_quality_test()
