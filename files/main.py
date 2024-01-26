@@ -53,7 +53,7 @@ def main(
     
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Prosty program z flagą verbose.')
+    parser = argparse.ArgumentParser(description='A* with bin packing to finding how many rectangles can be packed.')
     parser.add_argument('--plotting', help='active visualization, default false', action='store_true')
     args = parser.parse_args()
     plotting = False
