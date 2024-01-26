@@ -4,7 +4,7 @@ from Rectangle import Rectangle as Rect
 from Node import Node
 from aStar import a_star
 from time import time
-import matplotlib.pyplot as plt
+import argparse
 
 cases = [
     (4,1),
@@ -23,9 +23,8 @@ cases = [
     (6,3),
     (10,3),
     (6,3),
-    # (6,3),
-    # (10,3)
 ]
+
 
 def main(
         cases: list[tuple[float, float]],
@@ -54,7 +53,13 @@ def main(
     
 
 if __name__ == "__main__":
-    start = time()
-    main(cases, plotting=True)
-    end = time()
-    print(end-start)
+    parser = argparse.ArgumentParser(description='Prosty program z flagą verbose.')
+    parser.add_argument('--plotting', help='active visualization, default false', action='store_true')
+    args = parser.parse_args()
+    plotting = False
+    if args.plotting:
+        plotting = True
+    main(
+        cases,
+        plotting=plotting
+    )
